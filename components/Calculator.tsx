@@ -29,10 +29,10 @@ interface Props {
 export default function Calculator({
   price,
   co2,
-  EURISKConversion,
+  EURISKConversion = 140,
   electric,
 }: Props) {
-  const priceISK = price * EURISKConversion;
+  const priceISK = (price || 0)  * EURISKConversion;
   const N2 = 0.28;
   const urvinnslugjald = 3133; // ISK
   const forskraning = 17021; // ISK
@@ -61,7 +61,7 @@ export default function Calculator({
   ];
 
   const verdTilTolls = rows.reduce((a, b) => a + b.amount, priceISK);
-  const vorugjold = (Math.max(0, co2 - 85) * verdTilTolls * N2) / 100; // ISK
+  const vorugjold = (Math.max(0, (co2 || 0) - 85) * verdTilTolls * N2) / 100; // ISK
   const extraVorugjold = verdTilTolls * 0.05; // ISK
   const VSK =
     (verdTilTolls + vorugjold + extraVorugjold + urvinnslugjald) * 0.24;
