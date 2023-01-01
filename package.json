@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-with-typescript",
+  "name": "uranus",
   "version": "5.0.0",
   "private": true,
   "scripts": {
@@ -14,14 +14,24 @@
     "@emotion/react": "latest",
     "@emotion/server": "latest",
     "@emotion/styled": "latest",
+    "@hookform/resolvers": "^2.9.10",
     "@mui/icons-material": "latest",
+    "@mui/lab": "latest",
     "@mui/material": "latest",
     "@next/font": "latest",
     "@types/react-input-mask": "^3.0.2",
+    "firebase": "^9.10.0",
+    "firebase-admin": "^11.0.1",
+    "ldml-number": "^1.1.0",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-input-mask": "^2.0.4"
+    "react-firebase-hooks": "^5.0.3",
+    "react-firebaseui": "^6.0.0",
+    "react-hook-form": "^7.41.2",
+    "react-input-mask": "^2.0.4",
+    "react-router-dom": "^6.6.1",
+    "zod": "^3.20.2"
   },
   "devDependencies": {
     "@types/node": "latest",

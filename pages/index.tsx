@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -16,7 +17,6 @@ import Paper from '@mui/material/Paper';
 import Link from '../src/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -36,6 +36,15 @@ import InputMask from 'react-input-mask';
 // import Orders from './Orders';
 import Calculator from '../components/Calculator';
 import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+
+import firebase from 'src/firebase/clientApp';
+import { getAuth, signOut } from '@firebase/auth';
+import { LogoutOutlined, Router } from '@mui/icons-material';
+import router, { useRouter } from 'next/router';
+import { InputAdornment } from '@mui/material';
+const auth = getAuth(firebase.app());
 
 function Copyright(props: any) {
   return (
@@ -169,15 +178,27 @@ const Drawer = styled(MuiDrawer, {
 const mdTheme = createTheme();
 
 function DashboardContent() {
+  const [user, loading, error] = useAuthState(auth);
+  const router = useRouter();
   const [open, setOpen] = useState(true);
-  const [price, setPrice] = useState(0);
-  const [co2, setCo2] = useState(0);
-  const [eurIsk, setEurIsk] = useState(0);
+  const [price, setPrice] = useState<number | undefined>(undefined);
+  const [co2, setCo2] = useState<number | undefined>(undefined);
+  const [eurIsk, setEurIsk] = useState<number | undefined>(undefined);
+  const [electric, setElectric] = useState(false);
 
   const [showCalculator, setShowCalculator] = useState(false);
 
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  const logout = async () => {
+    await signOut(auth);
+    router.replace('/login');
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setElectric(event.target.checked);
   };
 
   return (
@@ -211,11 +232,14 @@ function DashboardContent() {
             >
               Úranus
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+            <Box display={'flex'} flexDirection={'row'} flexWrap="nowrap">
+              <Typography component="p" variant="h6" color="inherit">
+                {user?.email}
+              </Typography>
+              <IconButton color="inherit" onClick={logout}>
+                <LogoutOutlined />
+              </IconButton>
+            </Box>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -277,6 +301,11 @@ function DashboardContent() {
                       value={price}
                       onChange={(e) => setPrice(Number(e.target.value))}
                       type={'number'}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">€</InputAdornment>
+                        ),
+                      }}
                     />
                     <TextField
                       id="eurIsk"
@@ -293,6 +322,16 @@ function DashboardContent() {
                       type={'number'}
                       value={co2}
                       onChange={(e) => setCo2(Number(e.target.value))}
+                    />
+                    <FormControlLabel
+                      label="Rafbíll"
+                      control={
+                        <Checkbox
+                          checked={electric}
+                          onChange={handleChange}
+                          inputProps={{ 'aria-label': 'controlled' }}
+                        />
+                      }
                     />
                   </Box>
                   <Box alignSelf="flex-end">
@@ -315,12 +354,12 @@ function DashboardContent() {
                       price={price}
                       co2={co2}
                       EURISKConversion={eurIsk}
+                      electric={electric}
                     />
                   </Paper>
                 )}
               </Grid>
             </Grid>
-            <Copyright sx={{ pt: 4 }} />
           </Container>
         </Box>
       </Box>
